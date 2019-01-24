@@ -50,7 +50,7 @@ def check_args(args):
             args.data = binascii.unhexlify(hexdata)
 
     if args.uuid is not None or args.handle is not None:
-        if args.data is None:
+        if args.data is None and args.xeadCharacteristic is None and args.waitNotification is None:
             print("! Data parameter ( --data ) is required for write operations.\n")
             quit()
 
@@ -100,6 +100,8 @@ def main():
     parser.add_argument('-u', '--uuid', action='store', type=str, default=None, help='Write data to this characteristic UUID (requires --mac and --data).' )
     parser.add_argument('-n', '--handle', action='store', type=str, default=None, help='Write data to this characteristic handle (requires --mac and --data).' )
     parser.add_argument('-d', '--data', action='store', type=str, default=None, help='Data to be written as a quoted string or as hex ( 0xdeadbeef... ).' )
+    parser.add_argument('-x', '--xeadCharacteristic', action='store_true', help='Read data from characteristic' )
+    parser.add_argument('-w', '--waitNotification', action='store_true', help='Wait for notifications/indications from specified characteristic')
     parser.add_argument('-r', '--datafile', action='store', type=str, default=None, help='Read data to be written from this file.' )
     parser.add_argument('-m', '--mtu', action='store', type=int, default=None, help='Set MTU.' )
     parser.add_argument('-j', '--json_log', action='store', type=str, default=None, help='Name of a json logfile' )
