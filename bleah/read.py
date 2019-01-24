@@ -23,12 +23,44 @@ from bleah.swag import *
 
 
 def readChar(dev, args):
-
-
-
-
-
-
-
-def showReadValue(val):
-    
+     char = None
+     lookingfor = "uuid(%s)" % (args.uuid)
+     if args.handle:
+         lookingfor="handle(%d)" % (args.handle)
+     print("@ Searching for characteristic %s ..." % ( bold(lookingfor) )),
+     sys.stdout.flush()
+ 
+     for s in dev.services:
+         if char is not None:
+             break
+         elif s.hndStart == s.hndEnd:
+             continue
+ 
+         for i, c in enumerate( s.getCharacteristics() ):
+             if args.uuid:
+                 if str(c.uuid) == args.uuid:
+                     char = c
+                     break
+             if args.handle:
+                 if c.getHandle() == args.handle:
+                     char =c
+                     break
+ 
+     if char is not None:
+         if "READ" in char.propertiesToString():
+             print(green("found"))
+             print("@ Reading ..."),
+             sys.stdout.flush()
+ 
+             try:
+                 raw = char.read()
+                 print(green('done'))
+             except Exception as e:
+                 print(red( str(e) ))
+ 
+         else:
+             print(red('not readable'))
+ 
+     else:
+         print(red( bold("NOT FOUND") ))
+                                                                   
