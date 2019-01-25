@@ -29,6 +29,7 @@ from bleah.swag import *
 from bleah.enumerate import *
 from bleah.write import *
 from bleah.read import *
+from bleah.waitnotify import *
 
 def macMatchesArgPattern(argpattern, mac):
     """
@@ -297,9 +298,13 @@ class Bleah():
                     print(green('connected.'))
 
                     if args.uuid or args.handle:
-                        if args.xeadCharacteristic is not None:
+                        if args.xeadCharacteristic is True:
                             print()
                             readChar( dev , args)
+                            print()
+                        elif args.waitNotification is True:
+                            print()
+                            waitNotify( dev , args)
                             print()
                         else:
                             print()

@@ -23,12 +23,13 @@ from bleah.swag import *
 
 
 class NotificationDelegate(btle.DefaultDelegate):
-    def __init__(self,params):
+    def __init__(self):
         btle.DefaultDelegate.__init__(self)
         #init part here
 
 
     def handleNotification(self,cHandle,data):
+        print("@ Value received: ")
         print(data)
 				#"value": deserialize_char( char, char.propertiesToString(), raw ),
 				#"value_plain": deserialize_char( char, char.propertiesToString(), raw, True ),
@@ -66,14 +67,15 @@ def waitNotify(dev, args):
              sys.stdout.flush()
 
              try:
-                 p = btle.Peripheral(address)
-                 p.setDelegate(NotificationDelegate(params))
+                 #p = btle.Peripheral(dev.addr)
+                 dev.setDelegate(NotificationDelegate())
                  while True:
-                     if p.waitForNotifications(1.0):
+                     print ('while oh while');
+                     if dev.waitForNotifications(1.0):
+                        print("waitin")
 												#somthing happened
                         continue
 
-                 print("Waiting...")
              except Exception as e:
                  print(red( str(e) ))
 
