@@ -66,15 +66,24 @@ def waitNotify(dev, args):
              print("@ Waiting for notifications ..."),
              sys.stdout.flush()
 
+
              try:
                  #p = btle.Peripheral(dev.addr)
                  dev.setDelegate(NotificationDelegate())
+                 if "NOTIFY" in char.propertiesToString():
+                     if "WRITE" in char.propertiesToString():
+                         dev.writeCharacteristic(char.valHandle,"\x01\x00")
+                     else:
+                         dev.writeCharacteristic(char.valHandle+1,"\x01\x00")
+                 if "INDICATE" in char.propertiesToString():
+                     if "WRITE" in char.propertiesToString():
+                         dev.writeCharacteristic(char.valHandle,"\x02\x00")
+                     else:
+                         dev.writeCharacteristic(char.valHandle+1,"\x02\x00")
                  while True:
-                     print ('while oh while');
                      if dev.waitForNotifications(1.0):
-                        print("waitin")
 												#somthing happened
-                        continue
+                        print()
 
              except Exception as e:
                  print(red( str(e) ))
