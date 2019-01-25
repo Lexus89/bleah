@@ -17,25 +17,38 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 import sys
-from bluepy.btle import Characteristic
+from bluepy import btle 
 
 from bleah.swag import *
 
 
-def readChar(dev, args):
+class NotificationDelegate(btle.DefaultDelegate):
+    def __init__(self,params):
+        btle.DefaultDelegate.__init__(self)
+        #init part here
+
+
+    def handleNotification(self,cHandle,data):
+        print(data)
+				#"value": deserialize_char( char, char.propertiesToString(), raw ),
+				#"value_plain": deserialize_char( char, char.propertiesToString(), raw, True ),
+
+
+
+def waitNotify(dev, args):
      char = None
      lookingfor = "uuid(%s)" % (args.uuid)
      if args.handle:
          lookingfor="handle(%d)" % (args.handle)
      print("@ Searching for characteristic %s ..." % ( bold(lookingfor) )),
      sys.stdout.flush()
- 
+
      for s in dev.services:
          if char is not None:
              break
          elif s.hndStart == s.hndEnd:
              continue
- 
+
          for i, c in enumerate( s.getCharacteristics() ):
              if args.uuid:
                  if str(c.uuid) == args.uuid:
@@ -45,23 +58,29 @@ def readChar(dev, args):
                  if c.getHandle() == args.handle:
                      char =c
                      break
- 
+
      if char is not None:
-         if "READ" in char.propertiesToString():
+         if "NOTIFY" in char.propertiesToString() or "INDICATE" in char.propertiesToString():
              print(green("found"))
-             print("@ Reading ..."),
+             print("@ Waiting for notifications ..."),
              sys.stdout.flush()
- 
+
              try:
-                 raw = char.read()
-                 print(green('done'))
+                 p = btle.Peripheral(address)
+                 p.setDelegate(NotificationDelegate(params))
+                 while True:
+                     if p.waitForNotifications(1.0):
+												#somthing happened
+                        continue
+
+                 print("Waiting...")
              except Exception as e:
                  print(red( str(e) ))
- 
+
          else:
              print(red('not readable'))
- 
+
      else:
          print(red( bold("NOT FOUND") ))
-                                                                   
+
 

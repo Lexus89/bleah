@@ -28,6 +28,7 @@ import bleah.vendors as vendors
 from bleah.swag import *
 from bleah.enumerate import *
 from bleah.write import *
+from bleah.read import *
 
 def macMatchesArgPattern(argpattern, mac):
     """
@@ -296,9 +297,14 @@ class Bleah():
                     print(green('connected.'))
 
                     if args.uuid or args.handle:
-                        print()
-                        do_write_ops( dev, args )
-                        print()
+                        if args.xeadCharacteristic is not None:
+                            print()
+                            readChar( dev , args)
+                            print()
+                        else:
+                            print()
+                            do_write_ops( dev, args )
+                            print()
 
                     if args.enumerate:
                         print("@ Enumerating all the things "),
