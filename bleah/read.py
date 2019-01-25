@@ -54,6 +54,7 @@ def readChar(dev, args):
  
              try:
                  raw = char.read()
+                 print(raw)
                  print(green('done'))
              except Exception as e:
                  print(red( str(e) ))
